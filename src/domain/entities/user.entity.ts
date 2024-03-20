@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { hash } from 'bcrypt';
 
 @Entity({
     name: 'users'
@@ -53,5 +54,10 @@ export class User {
         default: () => 'CURRENT_TIMESTAMP'
     })
     updated_at: Date;
+
+    @BeforeInsert()
+    async hashPassword() {
+        this.password = await hash(this.password, Number(process.env.HASH_SALT));
+    }
 
 }

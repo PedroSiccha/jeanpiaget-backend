@@ -15,15 +15,15 @@ export class UsersService {
         try {
             await validateOrReject(userDto);
 
-            const existingEmail = await this.usersRepository.findOne({ where: { email: userDto.email } });
+            const existingEmail = await this.usersRepository.findOneBy({ email: userDto.email });
             if (existingEmail) {
                 throw new ConflictException('El email ya está en uso.');
             }
-            const existingPhone = await this.usersRepository.findOne({ where: { phone: userDto.phone } });
+            const existingPhone = await this.usersRepository.findOneBy({ phone: userDto.phone });
             if (existingPhone) {
                 throw new ConflictException('El teléfono ya está en uso.');
             }
-            const existingDni = await this.usersRepository.findOne({ where: { dni: userDto.dni } });
+            const existingDni = await this.usersRepository.findOneBy({ dni: userDto.dni });
             if (existingDni) {
                 throw new ConflictException('El dni ya está en uso.');
             }
