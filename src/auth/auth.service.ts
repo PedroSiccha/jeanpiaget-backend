@@ -1,20 +1,19 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../domain/entities/user.entity';
-import { Repository } from 'typeorm';
-import { CreateUserDto } from '../application/dtos/user/create-user.dto';
 import { validateOrReject } from 'class-validator';
+import { CreateUserDto } from 'src/application/dtos/user/create-user.dto';
+import { User } from 'src/domain/entities/user.entity';
+import { Repository } from 'typeorm';
 
 @Injectable()
-export class UsersService {
+export class AuthService {
     constructor(
         @InjectRepository(User) private usersRepository: Repository<User>
     ) {}
 
-    async create(userDto: CreateUserDto): Promise<ApiResponse<User>> {
+    async register(userDto: CreateUserDto): Promise<ApiResponse<User>> {
         try {
             await validateOrReject(userDto);
-
             const existingEmail = await this.usersRepository.findOne({ where: { email: userDto.email } });
             if (existingEmail) {
                 throw new ConflictException('El email ya está en uso.');
