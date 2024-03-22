@@ -6,11 +6,13 @@ import { CreateUserDto } from 'src/application/dtos/user/create-user.dto';
 import { User } from 'src/domain/entities/user.entity';
 import { Repository } from 'typeorm';
 import { compare } from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
     constructor(
-        @InjectRepository(User) private usersRepository: Repository<User>
+        @InjectRepository(User) private usersRepository: Repository<User>,
+        private jwtService: JwtService
     ) {}
 
     async register(userDto: CreateUserDto): Promise<ApiResponse<User>> {
@@ -51,7 +53,15 @@ export class AuthService {
                 throw new ForbiddenException('La contraseña es incorrecta');
             }
 
-            return { success: true, message: 'Bienvenido', data: existingUser,};
+            delete existingUser.password;
+            const payload = {
+                id: existingUser.id,
+                name: existingUser.name
+            }
+
+            const token = this.jwtService.sign(payload);
+
+            return { success: true, message: 'Bienvenido', data: existingUser, token: token};
 
         } catch(error) {
             throw error;
