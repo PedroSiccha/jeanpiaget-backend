@@ -4,6 +4,8 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { JwtModule } from '@nestjs/jwt';
+import { jwtConstants } from './application/utils/jwt.constants';
 
 @Module({
   imports: [
@@ -16,6 +18,10 @@ import { AuthModule } from './auth/auth.module';
       database: 'jeanpiaget_db',
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true
+    }),
+    JwtModule.register({
+      secret: jwtConstants.secret,
+      signOptions: { expiresIn: '60d' },
     }),
     UsersModule,
     AuthModule
