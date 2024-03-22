@@ -1,9 +1,11 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { validateOrReject } from 'class-validator';
+import { LoginAuthDto } from 'src/application/dtos/auth/login-auth.dto';
 import { CreateUserDto } from 'src/application/dtos/user/create-user.dto';
 import { User } from 'src/domain/entities/user.entity';
 import { Repository } from 'typeorm';
+import { compare } from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -30,6 +32,28 @@ export class AuthService {
             const createdUser = await this.usersRepository.save(newUser);
             return { success: true, message: 'Usuario creado correctamente', data: createdUser,};
         } catch (error) {
+            throw error;
+        }
+    }
+
+    async login(loginDto: LoginAuthDto): Promise<ApiResponse<User>> {
+        try {
+
+            const { email, password } = loginDto;
+            const existingUser = await this.usersRepository.findOneBy({ email: email });
+            if (!existingUser) {
+                throw new NotFoundException('El usuario no existe.');
+            }
+
+            const isPasswordValid = await compare(password, existingUser.password);
+
+            if (!isPasswordValid) {
+                throw new ForbiddenException('La contraseña es incorrecta');
+            }
+
+            return { success: true, message: 'Bienvenido', data: existingUser,};
+
+        } catch(error) {
             throw error;
         }
     }
