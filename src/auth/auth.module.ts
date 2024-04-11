@@ -5,6 +5,7 @@ import { User } from 'src/domain/entities/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from 'src/application/utils/jwt.constants';
+import { JwtStrategy } from 'src/application/utils/jwt.strategy';
 
 @Module({
   imports: [ 
@@ -16,7 +17,7 @@ import { jwtConstants } from 'src/application/utils/jwt.constants';
       signOptions: { expiresIn: '60d' },
     }),
   ],
-  providers: [AuthService],
+  providers: [AuthService, JwtStrategy],
   controllers: [AuthController]
 })
 export class AuthModule {}

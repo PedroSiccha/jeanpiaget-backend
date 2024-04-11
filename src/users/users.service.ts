@@ -35,4 +35,13 @@ export class UsersService {
         }
     }
 
+    async findAll(): Promise<ApiResponse<User[]>> {
+        try {
+            const users = await this.usersRepository.find();
+            return { success: true, message: 'Todos los usuarios', data: users};
+        } catch (error) {
+            throw error;
+        }
+    }
+
 }
