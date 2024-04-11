@@ -1,7 +1,9 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, FileTypeValidator, Get, MaxFileSizeValidator, Param, ParseFilePipe, ParseIntPipe, Post, Put, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { CreateUserDto } from '../application/dtos/user/create-user.dto';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UpdateUserDto } from '../application/dtos/user/update-user.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('v1/users')
 export class UsersController {
@@ -19,6 +21,33 @@ export class UsersController {
         @Body() userDto: CreateUserDto
     ) {
         return this.usersService.create(userDto);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Put(':id')
+    update(
+        @Param('id', ParseIntPipe) id: number, 
+        @Body()user: UpdateUserDto 
+    ) {
+        return this.usersService.update(id, user);
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('upload/:id')
+    @UseInterceptors(FileInterceptor('file'))
+    updateWithImage(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() user: UpdateUserDto,
+        @UploadedFile(
+            new ParseFilePipe({
+                validators: [
+                    new MaxFileSizeValidator({ maxSize: 1024 * 1024 * 4 }),
+                    new FileTypeValidator({ fileType: '.(png|jpeg|jpg)' }),
+                ]
+            })
+        ) file: Express.Multer.File
+    ) {
+        return this.usersService.updateWithImage(id, user, file);
     }
 
 }

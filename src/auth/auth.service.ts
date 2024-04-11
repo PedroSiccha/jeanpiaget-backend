@@ -32,7 +32,15 @@ export class AuthService {
             }
             const newUser = this.usersRepository.create(userDto);
             const createdUser = await this.usersRepository.save(newUser);
-            return { success: true, message: 'Usuario creado correctamente', data: createdUser,};
+
+            const payload = {
+                id: createdUser.id,
+                name: createdUser.name
+            }
+
+            const token = this.jwtService.sign(payload);
+
+            return { success: true, message: 'Usuario creado correctamente', data: createdUser, token: 'Bearer ' + token};
         } catch (error) {
             throw error;
         }
@@ -61,7 +69,7 @@ export class AuthService {
 
             const token = this.jwtService.sign(payload);
 
-            return { success: true, message: 'Bienvenido', data: existingUser, token: token};
+            return { success: true, message: 'Bienvenido', data: existingUser, token: 'Bearer ' + token};
 
         } catch(error) {
             throw error;
