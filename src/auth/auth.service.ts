@@ -50,7 +50,10 @@ export class AuthService {
         try {
 
             const { email, password } = loginDto;
-            const existingUser = await this.usersRepository.findOneBy({ email: email });
+            const existingUser = await this.usersRepository.findOne({ 
+                where: { email: email },
+                relations: ['roles']
+            });
             if (!existingUser) {
                 throw new NotFoundException('El usuario no existe.');
             }
@@ -60,11 +63,13 @@ export class AuthService {
             if (!isPasswordValid) {
                 throw new ForbiddenException('La contraseña es incorrecta');
             }
+            const rolesIds = existingUser.roles.map( rol => rol.id);
 
             delete existingUser.password;
             const payload = {
                 id: existingUser.id,
-                name: existingUser.name
+                name: existingUser.name,
+                roles: rolesIds
             }
 
             const token = this.jwtService.sign(payload);

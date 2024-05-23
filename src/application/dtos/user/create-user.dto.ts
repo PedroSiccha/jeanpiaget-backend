@@ -32,4 +32,6 @@ export class CreateUserDto {
 
     notification_token?: string;
 
+    rolesIds: string[];
+
 }

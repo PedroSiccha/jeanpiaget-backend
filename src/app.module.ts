@@ -5,7 +5,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './application/utils/jwt.constants';
+import { jwtConstants } from './application/jwt/jwt.constants';
+import { RolesModule } from './roles/roles.module';
+import { CategoryCourseModule } from './category_course/category_course.module';
+import { CourseModule } from './course/course.module';
+import { SectionModule } from './section/section.module';
+import { IssueModule } from './issue/issue.module';
+import { MediaModule } from './media/media.module';
 
 @Module({
   imports: [
@@ -24,7 +30,13 @@ import { jwtConstants } from './application/utils/jwt.constants';
       signOptions: { expiresIn: '60d' },
     }),
     UsersModule,
-    AuthModule
+    AuthModule,
+    RolesModule,
+    CategoryCourseModule,
+    CourseModule,
+    SectionModule,
+    IssueModule,
+    MediaModule
   ],
   controllers: [AppController],
   providers: [AppService],

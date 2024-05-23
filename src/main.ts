@@ -8,6 +8,6 @@ async function bootstrap() {
   app.enableVersioning({
     type: VersioningType.URI
   });
-  await app.listen(3000, '192.168.39.130' || 'localhost');
+  await app.listen(3000, '192.168.18.6' || 'localhost');
 }
 bootstrap();

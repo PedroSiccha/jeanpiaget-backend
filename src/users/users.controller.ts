@@ -1,16 +1,20 @@
 import { Body, Controller, FileTypeValidator, Get, MaxFileSizeValidator, Param, ParseFilePipe, ParseIntPipe, Post, Put, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { CreateUserDto } from '../application/dtos/user/create-user.dto';
 import { UsersService } from './users.service';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/application/jwt/jwt-auth.guard';
 import { UpdateUserDto } from '../application/dtos/user/update-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { JwtRolesGuard } from 'src/application/jwt/jwt-roles.guard';
+import { HasRoles } from 'src/application/jwt/has-roles';
+import { JwtRol } from 'src/application/jwt/jwt-rol';
 
 @Controller('v1/users')
 export class UsersController {
 
     constructor (private usersService: UsersService) {}
 
-    @UseGuards(JwtAuthGuard)
+    @HasRoles(JwtRol.ADMIN, JwtRol.INSTRUCTOR)
+    @UseGuards(JwtAuthGuard, JwtRolesGuard)
     @Get()
     findAll() {
         return this.usersService.findAll();
