@@ -12,16 +12,18 @@ import { CourseModule } from './course/course.module';
 import { SectionModule } from './section/section.module';
 import { IssueModule } from './issue/issue.module';
 import { MediaModule } from './media/media.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: '1234',
-      database: 'jeanpiaget_db',
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT, 10) || 3306,
+      username: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true
     }),
