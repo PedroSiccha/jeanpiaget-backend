@@ -20,7 +20,7 @@ export class CategoryCourseController {
         return this.categoryService.create(categoryDto);
     }
 
-    @HasRoles(JwtRol.ADMIN, JwtRol.INSTRUCTOR)
+    @HasRoles(JwtRol.ADMIN, JwtRol.INSTRUCTOR, JwtRol.STUDENT)
     @UseGuards(JwtAuthGuard, JwtRolesGuard)
     @Get()
     findAll() {

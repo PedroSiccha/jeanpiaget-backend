@@ -32,7 +32,7 @@ export class CourseController {
         return this.coursesService.create(course, banner);
     }
 
-    @HasRoles(JwtRol.ADMIN, JwtRol.INSTRUCTOR)
+    @HasRoles(JwtRol.ADMIN, JwtRol.INSTRUCTOR, JwtRol.STUDENT)
     @UseGuards(JwtAuthGuard, JwtRolesGuard)
     @Get()
     findAll() {
